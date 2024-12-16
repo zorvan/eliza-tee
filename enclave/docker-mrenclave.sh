@@ -1,0 +1,1 @@
+docker exec -it  eliza_sgx gramine-sgx-sigstruct-view eliza.sig
