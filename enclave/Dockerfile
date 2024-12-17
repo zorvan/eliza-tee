@@ -17,7 +17,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
     apt-utils=2.4.13 \
-    curl=7.81.0-1ubuntu1.19 \
+    curl=7.81.0-1ubuntu1.20 \
     wget=1.21.2-2ubuntu1.1 \
     git=1:2.34.1-1ubuntu1.11 \
     ca-certificates=20240203~22.04.1 \

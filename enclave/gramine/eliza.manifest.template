@@ -15,8 +15,40 @@ loader.log_level = "{{ log_level }}"
 
 loader.env.LD_LIBRARY_PATH = "/lib:/lib/x86_64-linux-gnu"
 loader.env.MALLOC_ARENA_MAX = "1"
-loader.env.PATH = "/usr/bin:/bin:/root/bin:/root/.local/share/pnpm/"
+
+loader.env.PATH = "/root/.local/share/pnpm:/usr/local/.nvm/versions/node/v23.3.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 loader.env.HOME = "/root/"
+
+loader.env.PNPM_HOME="/root/.local/share/pnpm/"
+loader.env.NODE_PATH="/usr/local/.nvm/vv23.3.0/lib/node_modules/"
+loader.env.NVM_DIR="/usr/local/.nvm/"
+loader.env.NVM_INC="/usr/local/.nvm/versions/node/v23.3.0/include/node/"
+loader.env.NVM_BIN="/usr/local/.nvm/versions/node/v23.3.0/bin/"
+loader.env.NVM_VERSION="v0.40.1"
+
+loader.env.SERVER_PORT="{{ server_port }}"
+loader.env.ELEVENLABS_VOICE_ID="{{ elevenlabs_voice_id }}"
+loader.env.ELEVENLABS_MODEL_ID="{{ elevenlabs_model_id }}"
+loader.env.ELEVENLABS_OUTPUT_FORMAT="{{ elevenlabs_output_format }}"
+loader.env.ELEVENLABS_XI_API_KEY="{{ elevenlabs_xi_api_key }}"
+loader.env.ELEVENLABS_VOICE_STYLE="{{ elevenlabs_voice_style }}"
+loader.env.ELEVENLABS_OPTIMIZE_STREAMING_LATENCY="{{ elevenlabs_optimize_streaming_latency }}"
+loader.env.ELEVENLABS_VOICE_STABILITY="{{ elevenlabs_voice_stability }}"
+loader.env.ELEVENLABS_VOICE_USE_SPEAKER_BOOST="{{ elevenlabs_voice_use_speaker_boost }}"
+loader.env.TWITTER_DRY_RUN="{{ twitter_dry_run }}"
+loader.env.TWITTER_EMAIL="{{ twitter_email }}"
+loader.env.TWITTER_USERNAME="{{ twitter_username }}"
+loader.env.TWITTER_PASSWORD="{{ twitter_password }}"
+loader.env.OPENAI_API_KEY="{{ openai_api_key }}"
+loader.env.X_SERVER_URL="{{ x_server_url }}"
+loader.env.WALLET_SECRET_SALT="{{ wallet_secret_salt }}"
+loader.env.HELIUS_API_KEY="{{ helius_api_key }}"
+loader.env.REDPILL_API_KEY="{{ redpill_api_key }}"
+loader.env.BIRDEYE_API_KEY="{{ birdeye_api_key }}"
+loader.env.RPC_URL="{{ rpc_url }}"
+loader.env.ELEVENLABS_VOICE_SIMILARITY_BOOST="{{ elevenlabs_voice_similarity_boost }}"
+loader.env.SOL_ADDRESS="{{ sol_address }}"
+loader.env.SLIPPAGE="{{ slippage }}"
 
 # --------------------------------
 #             SYS
@@ -35,6 +67,7 @@ sgx.trusted_files = [
   "file:{{ self_exe }}",
   #"file:/home/ubuntu/.local/share/pnpm/",
   "file:/root/.local/share/pnpm/",
+  "file:/usr/local/.nvm/",
   "file:{{ enclave_dir }}/trusted/",
   "file:{{ enclave_dir }}/package.json",
   "file:{{ enclave_dir }}/pnpm-workspace.yaml",
@@ -89,6 +122,8 @@ fs.mounts = [
 
   # Node Dependencies
   { path = "/root/.local/share/pnpm/" , uri = "file:/root/.local/share/pnpm/", type = "chroot"},
+  { path = "/usr/local/.nvm/" , uri = "file:/usr/local/.nvm/", type = "chroot"},
+  
   { path = "/package.json" , uri = "file:{{ enclave_dir }}/package.json", type = "chroot"},
   { path = "/pnpm-workspace.yaml" , uri = "file:{{ enclave_dir }}/pnpm-workspace.yaml", type = "chroot"},
   { path = "/.npmrc" , uri = "file:{{ enclave_dir }}/.npmrc", type = "chroot"},

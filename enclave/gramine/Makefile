@@ -42,6 +42,29 @@ eliza.manifest: $(MANIFEST_FILE)
 		-Darch_libdir=$(ARCH_LIBDIR) \
 		-Dself_exe=$(SELF_EXE) \
 		-Denclave_dir=$(ENCLAVEDIR) \
+		-Dopenai_api_key=$(OPENAI_API_KEY) \
+      	-Dredpill_api_key=$(REDPILL_API_KEY) \
+      	-Delevenlabs_xi_api_key=$(ELEVENLABS_XI_API_KEY) \
+      	-Delevenlabs_model_id=$(ELEVENLABS_MODEL_ID) \
+      	-Delevenlabs_voice_id=$(ELEVENLABS_VOICE_ID) \
+      	-Delevenlabs_voice_stability=$(ELEVENLABS_VOICE_STABILITY) \
+      	-Delevenlabs_voice_similarity_boost=$(ELEVENLABS_VOICE_SIMILARITY_BOOST) \
+      	-Delevenlabs_voice_style=$(ELEVENLABS_VOICE_STYLE) \
+      	-Delevenlabs_voice_use_speaker_boost=$(ELEVENLABS_VOICE_USE_SPEAKER_BOOST) \
+      	-Delevenlabs_optimize_streaming_latency=$(ELEVENLABS_OPTIMIZE_STREAMING_LATENCY) \
+      	-Delevenlabs_output_format=$(ELEVENLABS_OUTPUT_FORMAT) \
+      	-Dtwitter_dry_run=$(TWITTER_DRY_RUN) \
+      	-Dtwitter_username=$(TWITTER_USERNAME) \
+      	-Dtwitter_password=$(TWITTER_PASSWORD) \
+      	-Dtwitter_email=$(TWITTER_EMAIL) \
+      	-Dx_server_url=$(X_SERVER_URL) \
+      	-Dbirdeye_api_key=$(BIRDEYE_API_KEY) \
+      	-Dsol_address=$(SOL_ADDRESS) \
+      	-Dslippage=$(SLIPPAGE) \
+      	-Drpc_url=$(RPC_URL) \
+      	-Dhelius_api_key=$(HELIUS_API_KEY) \
+      	-Dserver_port=$(SERVER_PORT) \
+      	-Dwallet_secret_salt=$(WALLET_SECRET_SALT) \
 		$< $@
 
 eliza.manifest.sgx eliza.sig &: eliza.manifest

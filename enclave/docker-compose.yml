@@ -14,6 +14,7 @@ services:
       - /run/aesmd:/run/aesmd
       - sgx:/opt/eliza/packages/client-twitter/src/tweetcache
       - sgx:/opt/eliza/db.sqlite
+      - sgx:/opt/eliza/data
     devices:
       - /dev/sgx_enclave
     networks:
