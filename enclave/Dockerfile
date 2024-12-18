@@ -4,10 +4,10 @@ ARG UBUNTU_VERSION="22.04"
 
 # compiler version is fixed for mrenclave
 FROM ubuntu:${UBUNTU_VERSION} as eliza-gramine
-ARG ELIZA_VERSION="v0.1.6-alpha.1"
+ARG ELIZA_VERSION="v0.1.6-alpha.4"
 ARG NVM_VERSION="v0.40.1"
 ARG NODE_VERSION="v23.3.0"
-ARG PNPM_VERSION="9.14.4"
+ARG PNPM_VERSION="9.15.0"
 
 SHELL ["/bin/bash", "-c"]
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -36,25 +36,22 @@ RUN apt-get install -y --no-install-recommends \
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y  tzdata=2024a-0ubuntu0.22.04.1
 
-# Install Node
-ENV NVM_DIR /usr/local/.nvm
-RUN mkdir -p $NVM_DIR
-ENV NVM_VERSION=${NVM_VERSION}
-RUN curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" | bash \
-    && . "$NVM_DIR/nvm.sh"  \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default
-
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
-
 # Install PNPM
 RUN wget -qO- https://get.pnpm.io/install.sh | PNPM_VERSION="$PNPM_VERSION" ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
-ENV PNPM_HOME "/root/.local/share/pnpm"
+RUN mv /root/.local/share/pnpm /usr/local/share/
+ENV PNPM_HOME "/usr/local/share/pnpm"
 ENV PATH      $PNPM_HOME:$PATH
 RUN pnpm env use --global $NODE_VERSION
 RUN pnpm install turbo --global
+
+# Remove Symlinks from PNPM
+RUN mv $PNPM_HOME/node $PNPM_HOME/node_original
+RUN cp $PNPM_HOME/nodejs/23.3.0/bin/node $PNPM_HOME/node
+RUN mv $PNPM_HOME/nodejs_current $PNPM_HOME/nodejs_current_original
+RUN mkdir $PNPM_HOME/nodejs_current
+RUN cp -rf $PNPM_HOME/nodejs/23.3.0/* $PNPM_HOME/nodejs_current/
+
+#ENV NODE_PATH $PNPM_HOME/global/5/node_modules/
 
 # Install Gramine
 RUN curl -fsSLo /usr/share/keyrings/gramine-keyring.gpg https://packages.gramineproject.io/gramine-keyring.gpg
@@ -89,12 +86,20 @@ RUN git clone --depth 1 --branch ${ELIZA_VERSION} https://github.com/ai16z/eliza
 WORKDIR /opt/eliza
 COPY ./ /opt/eliza/enclave
 
+# Preventing Symlinks
+RUN pnpm config set prefer-symlinked-executables false -g
+RUN echo -e "\nprefer-symlinked-executables=false" >> .npmrc
+RUN echo -e "node-version=23.3.0" >> .npmrc
+RUN echo -e "engine-strict=true" >> .npmrc 
+
+#RUN pnpm config set symlink false -g
+#RUN echo -e "symlink=false\n" >> .npmrc
+
 # Install dependencies and build the project
 RUN pnpm install
 RUN pnpm build
-RUN pnpm prune --prod
 
-RUN ls -lsth
+#RUN pnpm prune --prod
 
 # TODO: add another stage for docker here
 
@@ -117,7 +122,7 @@ RUN cp -rf ../../packages/ ./packages
 RUN cp -rf ../../scripts/ ./scripts
 RUN cp -rf ../../characters/ ./characters
 
-RUN make SGX=1 SGX_DEV_BUILD=0 DEBUG=1 all
+RUN make SGX=1 all
 
 CMD ["gramine-sgx", "eliza", "start", "--non-interactive"]
 
