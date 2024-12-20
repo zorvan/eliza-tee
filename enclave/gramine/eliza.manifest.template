@@ -53,7 +53,7 @@ sys.stack.size = "8M"
 # sys.brk.max_size = "1M"
 sys.insecure__allow_eventfd = true
 sys.enable_extra_runtime_domain_names_conf = true
-sys.disallow_subprocesses = true
+sys.disallow_subprocesses = false
 
 # --------------------------------
 #             SGX
