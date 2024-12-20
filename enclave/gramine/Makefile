@@ -75,7 +75,7 @@ endif
 
 .PHONY: start-gramine-server
 start-gramine-server: all
-	SGX_AESM_ADDR=1 $(GRAMINE) eliza start #--non-interactive
+	 SGX_AESM_ADDR=1 $(GRAMINE) eliza start --non-interactive
 
 .PHONY: clean
 clean:

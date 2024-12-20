@@ -3,7 +3,7 @@
 # --------------------------------
 
 libos.entrypoint = "{{ self_exe }}"
-#libos.check_invalid_pointers = true
+libos.check_invalid_pointers = true
 
 # --------------------------------
 #             LOADER
@@ -53,12 +53,52 @@ sys.stack.size = "8M"
 # sys.brk.max_size = "1M"
 sys.insecure__allow_eventfd = true
 sys.enable_extra_runtime_domain_names_conf = true
+sys.disallow_subprocesses = true
 
 # --------------------------------
 #             SGX
 # --------------------------------
 
 sgx.trusted_files = [
+ 
+]
+
+sgx.enclave_size = "32G"
+sgx.max_threads = 32
+
+sgx.isvprodid = 22
+sgx.isvsvn    = 212
+
+sgx.remote_attestation = "dcap"
+
+sgx.debug = false
+sgx.file_check_policy = "allow_all_but_log" #"strict"
+
+# sgx.insecure__rpc_thread_num = 24
+# sgx.require_avx    = false
+# sgx.require_avx512 = false
+# sgx.require_mpx    = false
+# sgx.require_pkru   = false
+# sgx.require_amx    = false
+
+sgx.edmm_enable = false
+sgx.preheat_enclave = false
+
+# EDMM Enabled
+sgx.use_exinfo = false
+
+# EDMM Disabled
+sgx.insecure__allow_memfaults_without_exinfo = true
+
+sgx.allowed_files = [
+ # "file:/etc/nsswitch.conf",
+ # "file:/etc/localtime",
+ # "file:/etc/hosts",
+ # "file:/etc/passwd",
+ 
+ # For Bash
+ "file:/usr/bin/",
+ 
  "file:{{ self_exe }}",
  "file:/usr/local/share/pnpm/",
  "file:{{ enclave_dir }}/trusted/",
@@ -73,37 +113,11 @@ sgx.trusted_files = [
  "file:{{ enclave_dir }}/characters/",
 ]
 
-sgx.enclave_size = "16G"
-sgx.max_threads = 32
-
-sgx.isvprodid = 22
-sgx.isvsvn    = 212
-
-sgx.remote_attestation = "dcap"
-
-sgx.debug = false
-sgx.edmm_enable = false
-sgx.preheat_enclave = false
-sgx.file_check_policy = "strict" #"allow_all_but_log"
-
-# sgx.insecure__rpc_thread_num = 24
-# sgx.require_avx    = false
-# sgx.require_avx512 = false
-# sgx.require_mpx    = false
-# sgx.require_pkru   = false
-# sgx.require_amx    = false
-# sgx.require_exinfo = false
-
-sgx.allowed_files = [
- # "file:/etc/nsswitch.conf",
- # "file:/etc/localtime",
- # "file:/etc/hosts",
- # "file:/etc/passwd",
-]
-
 # --------------------------------
 #             FS
 # --------------------------------
+
+fs.start_dir = "/eliza"
 
 fs.mounts = [
   { path = "/lib", uri = "file:{{ enclave_dir }}/trusted/gramine/runtime/glibc" },
@@ -113,22 +127,25 @@ fs.mounts = [
   # TMPFS
   { path = "/tmp", type = "tmpfs" },
 
+  # Bash
+  { path = "/usr/bin/" , uri = "file:/usr/bin/", type = "chroot"},
+  
   # PNPM & NODE
   { path = "/usr/local/share/pnpm/" , uri = "file:/usr/local/share/pnpm/", type = "chroot"},
   
   # ELIZA
-  { path = "/package.json" , uri = "file:{{ enclave_dir }}/package.json", type = "chroot"},
-  { path = "/pnpm-workspace.yaml" , uri = "file:{{ enclave_dir }}/pnpm-workspace.yaml", type = "chroot"},
-  { path = "/.npmrc" , uri = "file:{{ enclave_dir }}/.npmrc", type = "chroot"},
-  { path = "/turbo.json" , uri = "file:{{ enclave_dir }}/turbo.json", type = "chroot"},
-  { path = "/agent/" , uri = "file:{{ enclave_dir }}/agent/", type = "chroot"},
-  { path = "/packages/" , uri = "file:{{ enclave_dir }}/packages/", type = "chroot"},
-  { path = "/scripts/" , uri = "file:{{ enclave_dir }}/scripts/", type = "chroot"},
-  { path = "/characters/" , uri = "file:{{ enclave_dir }}/characters/", type = "chroot"},
-  { path = "/node_modules/" , uri = "file:{{ enclave_dir }}/node_modules/", type = "chroot"},
+  { path = "/eliza/package.json" , uri = "file:{{ enclave_dir }}/package.json", type = "chroot"},
+  { path = "/eliza//pnpm-workspace.yaml" , uri = "file:{{ enclave_dir }}/pnpm-workspace.yaml", type = "chroot"},
+  { path = "/eliza//.npmrc" , uri = "file:{{ enclave_dir }}/.npmrc", type = "chroot"},
+  { path = "/eliza//turbo.json" , uri = "file:{{ enclave_dir }}/turbo.json", type = "chroot"},
+  { path = "/eliza//agent/" , uri = "file:{{ enclave_dir }}/agent/", type = "chroot"},
+  { path = "/eliza//packages/" , uri = "file:{{ enclave_dir }}/packages/", type = "chroot"},
+  { path = "/eliza//scripts/" , uri = "file:{{ enclave_dir }}/scripts/", type = "chroot"},
+  { path = "/eliza//characters/" , uri = "file:{{ enclave_dir }}/characters/", type = "chroot"},
+  { path = "/eliza//node_modules/" , uri = "file:{{ enclave_dir }}/node_modules/", type = "chroot"},
 
   # SEALED
-  { path = "/data" , uri = "file:{{ enclave_dir }}/../../data/", type = "encrypted", key_name = "_sgx_mrenclave"},
-  { path = "/db.sqlite" , uri = "file:{{ enclave_dir }}/../../db.sqlite", type = "encrypted", key_name = "_sgx_mrenclave"},
+  { path = "/eliza//data" , uri = "file:{{ enclave_dir }}/../../data/", type = "encrypted", key_name = "_sgx_mrenclave"},
+  { path = "/eliza//db.sqlite" , uri = "file:{{ enclave_dir }}/../../db.sqlite", type = "encrypted", key_name = "_sgx_mrenclave"},
   # TODO: ADD all the Cache folders (tweetcache) to the seal path
 ]

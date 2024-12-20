@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   eliza-sgx-service:
     image: "eliza-sgx:${ENCLAVE_VERSION}"

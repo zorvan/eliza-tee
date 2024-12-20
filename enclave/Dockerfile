@@ -5,7 +5,6 @@ ARG UBUNTU_VERSION="22.04"
 # compiler version is fixed for mrenclave
 FROM ubuntu:${UBUNTU_VERSION} as eliza-gramine
 ARG ELIZA_VERSION="v0.1.6-alpha.4"
-ARG NVM_VERSION="v0.40.1"
 ARG NODE_VERSION="v23.3.0"
 ARG PNPM_VERSION="9.15.0"
 
@@ -16,10 +15,6 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 # Install Basic Packages
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
-    apt-utils=2.4.13 \
-    curl=7.81.0-1ubuntu1.20 \
-    wget=1.21.2-2ubuntu1.1 \
-    git=1:2.34.1-1ubuntu1.11 \
     ca-certificates=20240203~22.04.1 \
     libssl-dev=3.0.2-0ubuntu1.18 \
     unzip=6.0-26ubuntu3.2 \
@@ -32,7 +27,11 @@ RUN apt-get install -y --no-install-recommends \
     g++=4:11.2.0-1ubuntu1 \
     clang=1:14.0-55~exp2 \
     lib32stdc++6=12.3.0-1ubuntu1~22.04 \
-    build-essential=12.9ubuntu3
+    build-essential=12.9ubuntu3 \
+    apt-utils=2.4.13 \
+    curl=7.81.0-1ubuntu1.20 \
+    wget=1.21.2-2ubuntu1.1 \
+    git=1:2.34.1-1ubuntu1.11
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y  tzdata=2024a-0ubuntu0.22.04.1
 
@@ -43,6 +42,7 @@ ENV PNPM_HOME "/usr/local/share/pnpm"
 ENV PATH      $PNPM_HOME:$PATH
 RUN pnpm env use --global $NODE_VERSION
 RUN pnpm install turbo --global
+#RUN pnpm install cross-env --global
 
 # Remove Symlinks from PNPM
 RUN mv $PNPM_HOME/node $PNPM_HOME/node_original
@@ -81,16 +81,16 @@ RUN apt-get install -y \
 RUN apt-get install -y gramine=1.8
 RUN gramine-sgx-gen-private-key
 
-RUN git clone --depth 1 --branch ${ELIZA_VERSION} https://github.com/ai16z/eliza.git /opt/eliza
+RUN git clone --depth 1 --branch ${ELIZA_VERSION} https://github.com/ai16z/eliza.git /eliza-src
 
-WORKDIR /opt/eliza
-COPY ./ /opt/eliza/enclave
+WORKDIR /eliza-src
+COPY ./ /eliza-src/enclave
 
 # Preventing Symlinks
 RUN pnpm config set prefer-symlinked-executables false -g
 RUN echo -e "\nprefer-symlinked-executables=false" >> .npmrc
 RUN echo -e "node-version=23.3.0" >> .npmrc
-RUN echo -e "engine-strict=true" >> .npmrc 
+RUN echo -e "engine-strict=false" >> .npmrc 
 
 #RUN pnpm config set symlink false -g
 #RUN echo -e "symlink=false\n" >> .npmrc
@@ -106,11 +106,11 @@ RUN pnpm build
 # a seal folder
 RUN mkdir -p data
 
-WORKDIR /opt/eliza/enclave/gramine/trusted
+WORKDIR /eliza-src/enclave/gramine/trusted
 RUN chmod +x ./update-trusted.sh
 RUN ./update-trusted.sh
 
-WORKDIR /opt/eliza/enclave/gramine
+WORKDIR /eliza-src/enclave/gramine
 
 RUN cp -rf ../../package.json ./
 RUN cp -rf ../../pnpm-workspace.yaml ./
@@ -122,7 +122,8 @@ RUN cp -rf ../../packages/ ./packages
 RUN cp -rf ../../scripts/ ./scripts
 RUN cp -rf ../../characters/ ./characters
 
-RUN make SGX=1 all
+RUN make clean
+RUN make SGX=1 LOG_LEVEL=1 all
 
 CMD ["gramine-sgx", "eliza", "start", "--non-interactive"]
 
