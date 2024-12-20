@@ -3,7 +3,7 @@
 # --------------------------------
 
 libos.entrypoint = "{{ self_exe }}"
-libos.check_invalid_pointers = true
+libos.check_invalid_pointers = false
 
 # --------------------------------
 #             LOADER
@@ -63,8 +63,8 @@ sgx.trusted_files = [
  
 ]
 
-sgx.enclave_size = "32G"
-sgx.max_threads = 32
+sgx.enclave_size = "64G"
+sgx.max_threads = 16
 
 sgx.isvprodid = 22
 sgx.isvsvn    = 212
