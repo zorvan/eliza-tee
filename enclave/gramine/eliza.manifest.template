@@ -128,7 +128,7 @@ fs.mounts = [
   { path = "/tmp", type = "tmpfs" },
 
   # Bash
-  { path = "/bin/" , uri = "file:/usr/bin/", type = "chroot"},
+  { path = "/usr/bin/" , uri = "file:/usr/bin/", type = "chroot"},
   
   # PNPM & NODE
   { path = "/usr/local/share/pnpm/" , uri = "file:/usr/local/share/pnpm/", type = "chroot"},

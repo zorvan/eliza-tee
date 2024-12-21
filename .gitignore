@@ -2,12 +2,12 @@ enclave/gramine/trusted/arch_libdir/
 enclave/gramine/trusted/etc/
 enclave/gramine/trusted/gramine/
 
-enclave/gramine/package.json
-enclave/gramine/pnpm-workspace.yaml
+#enclave/gramine/package.json
+#enclave/gramine/pnpm-workspace.yaml
+#enclave/gramine/.npmrc
 enclave/gramine/turbo.json
 enclave/gramine/node_modules/
 enclave/gramine/agent/
-enclave/gramine/package
 enclave/gramine/packages
 enclave/gramine/scripts
 enclave/gramine/characters
