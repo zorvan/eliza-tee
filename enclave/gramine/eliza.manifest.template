@@ -3,7 +3,7 @@
 # --------------------------------
 
 libos.entrypoint = "{{ self_exe }}"
-libos.check_invalid_pointers = false
+libos.check_invalid_pointers = true
 
 # --------------------------------
 #             LOADER
@@ -16,7 +16,7 @@ loader.log_level = "{{ log_level }}"
 loader.env.LD_LIBRARY_PATH = "/lib:/lib/x86_64-linux-gnu"
 loader.env.MALLOC_ARENA_MAX = "1"
 
-loader.env.PATH = "/usr/local/share/pnpm/:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/"
+loader.env.PATH = "/usr/local/share/pnpm/:/usr/bin:/bin:/"
 loader.env.HOME = "/"
 
 loader.env.PNPM_HOME="/usr/local/share/pnpm/"
@@ -60,6 +60,17 @@ sys.disallow_subprocesses = false
 # --------------------------------
 
 sgx.trusted_files = [
+ "file:{{ self_exe }}",
+ "file:/bin/sh",
+ "file:/bin/bash",
+ "file:/usr/bin/sh",
+ "file:/usr/bin/sed",
+ "file:/usr/bin/dirname",
+ "file:/usr/bin/uname",
+ "file:{{ enclave_dir }}/package.json",
+ "file:{{ enclave_dir }}/pnpm-workspace.yaml",
+ "file:{{ enclave_dir }}/.npmrc",
+ "file:{{ enclave_dir }}/turbo.json",
  
 ]
 
@@ -95,17 +106,10 @@ sgx.allowed_files = [
  # "file:/etc/localtime",
  # "file:/etc/hosts",
  # "file:/etc/passwd",
- 
- # For Bash
- "file:/usr/bin/",
- 
- "file:{{ self_exe }}",
+
  "file:/usr/local/share/pnpm/",
  "file:{{ enclave_dir }}/trusted/",
- "file:{{ enclave_dir }}/package.json",
- "file:{{ enclave_dir }}/pnpm-workspace.yaml",
- "file:{{ enclave_dir }}/.npmrc",
- "file:{{ enclave_dir }}/turbo.json",
+
  "file:{{ enclave_dir }}/node_modules/",
  "file:{{ enclave_dir }}/agent/",
  "file:{{ enclave_dir }}/packages/",
@@ -128,7 +132,12 @@ fs.mounts = [
   { path = "/tmp", type = "tmpfs" },
 
   # Bash
-  { path = "/usr/bin/" , uri = "file:/usr/bin/", type = "chroot"},
+  { path = "/usr/bin/dirname" , uri = "file:/usr/bin/dirname", type = "chroot"},
+  { path = "/usr/bin/uname" , uri = "file:/usr/bin/uname", type = "chroot"},
+  { path = "/usr/bin/sed" , uri = "file:/usr/bin/sed", type = "chroot"},
+ # { path = "/usr/bin/sh" , uri = "file:/usr/bin/dash", type = "chroot"},
+  { path = "/bin/bash" , uri = "file:/bin/bash", type = "chroot"},
+  { path = "/bin/sh" , uri = "file:/bin/dash", type = "chroot"},
   
   # PNPM & NODE
   { path = "/usr/local/share/pnpm/" , uri = "file:/usr/local/share/pnpm/", type = "chroot"},
