@@ -12,6 +12,6 @@ cp -f /usr/lib/x86_64-linux-gnu/gramine/libsysdb.so ./gramine/
 cp -frL /usr/lib/x86_64-linux-gnu/gramine/runtime/glibc/* ./gramine/runtime/glibc/
 
 # Bash
-#cp -f /lib/x86_64-linux-gnu/libpcre2-8.so.0 ./arch_libdir/
-#cp -f /lib/x86_64-linux-gnu/libselinux.so.1 ./arch_libdir/
-#cp -f /lib/x86_64-linux-gnu/libtinfo.so.6 ./arch_libdir/
+cp -f /lib/x86_64-linux-gnu/libpcre2-8.so.0 ./arch_libdir/
+cp -f /lib/x86_64-linux-gnu/libselinux.so.1 ./arch_libdir/
+cp -f /lib/x86_64-linux-gnu/libtinfo.so.6 ./arch_libdir/

@@ -84,7 +84,7 @@ RUN gramine-sgx-gen-private-key
 RUN git clone --depth 1 --branch ${ELIZA_VERSION} https://github.com/ai16z/eliza.git /eliza-src
 
 WORKDIR /eliza-src
-COPY ./ /eliza-src/enclave
+COPY . ./enclave/
 
 # Preventing Symlinks
 RUN pnpm config set prefer-symlinked-executables false -g
