@@ -123,7 +123,7 @@ RUN cp -rf ../../scripts/ ./scripts
 RUN cp -rf ../../characters/ ./characters
 
 RUN make clean
-RUN make SGX=1 LOG_LEVEL=1 all
+RUN make SGX=1 LOG_LEVEL=0 all
 
 CMD ["gramine-sgx", "eliza", "start", "--non-interactive"]
 

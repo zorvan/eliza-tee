@@ -104,11 +104,12 @@ sgx.trusted_files = [
  "file:/usr/local/share/pnpm/",
  "file:{{ enclave_dir }}/trusted/",
 
- "file:{{ enclave_dir }}/node_modules/",
- "file:{{ enclave_dir }}/agent/",
  "file:{{ enclave_dir }}/packages/",
  "file:{{ enclave_dir }}/scripts/",
  "file:{{ enclave_dir }}/characters/",
+
+ # The Symlinks not working in trusted mode
+ #"file:{{ enclave_dir }}/agent/",
 ]
 
 sgx.allowed_files = [
@@ -116,6 +117,8 @@ sgx.allowed_files = [
  # "file:/etc/localtime",
  # "file:/etc/hosts",
  # "file:/etc/passwd",
+ "file:{{ enclave_dir }}/node_modules/",
+ "file:{{ enclave_dir }}/agent/",
 ]
 
 # --------------------------------
@@ -154,7 +157,9 @@ fs.mounts = [
   { path = "/eliza/node_modules/" , uri = "file:{{ enclave_dir }}/node_modules/", type = "chroot"},
 
   # SEALED
-  { path = "/eliza/data" , uri = "file:{{ enclave_dir }}/../../data/", type = "encrypted", key_name = "_sgx_mrenclave"},
-  { path = "/eliza/db.sqlite" , uri = "file:{{ enclave_dir }}/../../db.sqlite", type = "encrypted", key_name = "_sgx_mrenclave"},
+  { path = "/eliza/agent/data" , uri = "file:{{ enclave_dir }}/agent/data/", type = "encrypted", key_name = "_sgx_mrenclave"},
+  { path = "/eliza/agent/content_cache" , uri = "file:{{ enclave_dir }}/agent/content_cache/", type = "encrypted", key_name = "_sgx_mrenclave"},
+  { path = "/eliza/packages/content_cache" , uri = "file:{{ enclave_dir }}/packages/content_cache/", type = "encrypted", key_name = "_sgx_mrenclave"},
+
   # TODO: ADD all the Cache folders (tweetcache) to the seal path
 ]
